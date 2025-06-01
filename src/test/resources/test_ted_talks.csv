@@ -1,0 +1,4 @@
+title,author,date,views,likes,link
+Valid Talk 1,Author One,January 2020,1000,100,http://example.com/1
+Invalid Talk,Author Two,InvalidDate,abc,xyz,http://example.com/2
+Valid Talk 2,Author Three,February 2021,2000,200,http://example.com/3
