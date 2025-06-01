@@ -13,10 +13,6 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "ted_talks", indexes = {
-        @Index(name = "idx_date", columnList = "date"),
-        @Index(name = "idx_likes_views", columnList = "likes, views")
-})
 public class TedTalks {
 
     @Id
