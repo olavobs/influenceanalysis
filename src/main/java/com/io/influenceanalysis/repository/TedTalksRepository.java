@@ -14,18 +14,22 @@ public interface TedTalksRepository extends JpaRepository<TedTalks, Long> {
     @Query("SELECT t.author AS author, SUM(t.views + t.likes) AS totalInfluence FROM TedTalks t GROUP BY t.author ORDER BY totalInfluence DESC LIMIT :limit")
     List<InfluentialSpeakerOutputDto> findInfluentialSpeakers(@Param("limit") int limit);
 
-    @Query("""
+    @Query(value = """
             SELECT
-                YEAR(t.date) AS year,
-                t.title AS title,
-                (t.likes + t.views) AS totalInfluence
-            FROM TedTalks t
-            WHERE (t.likes + t.views) = (
-                SELECT MAX(t2.likes + t2.views)
-                FROM TedTalks t2
-                WHERE YEAR(t2.date) = YEAR(t.date)
-            )
-            ORDER BY YEAR(t.date), t.title
-            """)
+                year,
+                title,
+                totalInfluence
+            FROM (
+                SELECT
+                    YEAR(date) AS year,
+                    title,
+                    SUM(views + likes) AS totalInfluence,
+                    ROW_NUMBER() OVER (PARTITION BY YEAR(date) ORDER BY SUM(views + likes) DESC) AS rn
+                FROM ted_talks
+                GROUP BY YEAR(date), title
+            ) AS subquery
+            WHERE rn = 1
+            ORDER BY year;
+            """, nativeQuery = true)
     List<TedTalkPerYearOutputDto> findMostInfluentialTedTalkPerYear();
 }
